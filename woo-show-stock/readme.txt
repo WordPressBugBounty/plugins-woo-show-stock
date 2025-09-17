@@ -1,5 +1,5 @@
 === Show Stock Status for WooCommerce ===
-Contributors: brightvesseldev, niloybrightvessel
+Contributors: brightvesseldev
 Tags: stock status, custom, stock, status,show stock
 Requires at least: 4.0
 Requires PHP: 5.6
