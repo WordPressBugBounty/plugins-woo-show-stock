@@ -1,11 +1,11 @@
 === Show Stock Status for WooCommerce ===
-Contributors: brightvesseldev
+Contributors: brightvesseldev, kleinmannbrightvessel
 Tags: stock status, custom, stock, status,show stock
 Requires at least: 4.0
 Requires PHP: 5.6
-WC tested up to: 7.2.2
-Tested up to: 6.5.3
-Stable tag: 1.0.5
+WC tested up to: 11.1.0
+Tested up to: 7.1
+Stable tag: 1.0.6
 
 == Description ==
 
@@ -28,6 +28,10 @@ The goal of this plugin is to show the “stock quantity” under each product i
 2. Stock settings
 
 == Changelog ==
+
+= 1.0.6 - 09 Sept 2026 =
+* Support for WooCommerce 11.1.x
+* Support for WordPress 7.1
 
 = 1.0.5 - 8 May 2024 =
 * Update: HPOS compatibility declare

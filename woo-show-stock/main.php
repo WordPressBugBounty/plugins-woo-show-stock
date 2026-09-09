@@ -3,14 +3,14 @@
  * Plugin Name: Show Stock Status for WooCommerce
  * Description: Show the “Stock Quantity” for each product in the shop, category and archive pages.
  * Author: Bright Plugins
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author URI: https://brightplugins.com/
  * Text Domain: woo-show-stock
  * Domain Path:  /languages/
  * Requires PHP: 7.2.0
  * Requires at least: 4.9
- * Tested up to: 6.5.3
- * WC tested up to: 8.8.3
+ * Tested up to: 7.1
+ * WC tested up to: 11.1.0
  * Requires Plugins: woocommerce
  * WC requires at least: 3.4
  */
