@@ -3,14 +3,14 @@
  * Plugin Name: Show Stock Status for WooCommerce
  * Description: Show the “Stock Quantity” for each product in the shop, category and archive pages.
  * Author: Bright Plugins
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author URI: https://brightplugins.com/
  * Text Domain: woo-show-stock
  * Domain Path:  /languages/
- * Requires PHP: 7.2.0
+ * Requires PHP: 7.4
  * Requires at least: 4.9
  * Tested up to: 7.1
- * WC tested up to: 11.1.0
+ * WC tested up to: 11.3.1
  * Requires Plugins: woocommerce
  * WC requires at least: 3.4
  */
@@ -149,6 +149,301 @@ if ( 'yes' === get_option( 'wc_always_show_stock' ) && null !== get_option( 'wc_
 }
 
 // Add settings to the specific section we created before
+define( 'SSFWBP_OFFER_URL', 'https://brightplugins.com/shop/?utm_source=freemium&utm_medium=admin_banner&utm_campaign=black_friday_2026&utm_content=stock_status' );
+define( 'SSFWBP_ASSETS', plugin_dir_url( __FILE__ ) . 'assets' );
+
+/**
+ * Generate the Black Friday offer banner if the current date is before 2027-01-01.
+ */
+$is_offer_valid = time() < strtotime( '2027-01-01 00:00:00' );
+if( $is_offer_valid ) {
+
+	add_action( 'wp_ajax_bp_dismiss_bf_banner_stock_status_bp', function() {
+		//...
+		check_ajax_referer( 'bp_bf_banner_nonce_stock_status_bp', 'nonce' );
+		//...
+		if( !current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		$user_id = get_current_user_id();
+
+		if( get_transient( 'bp_bf_banner_dismissed_stock_status_bp_' . $user_id ) ) {
+			wp_send_json_success();
+		}
+
+		set_transient( 'bp_bf_banner_dismissed_stock_status_bp_' . $user_id, true, (DAY_IN_SECONDS * 14) );
+
+		wp_send_json_success();
+	} );
+
+	add_action('woocommerce_before_settings_products', 'ssfwbp_generate_offer_banner');
+}
+
+/**
+ * 
+ */
+function ssfwbp_generate_offer_banner()
+{
+	$is_plugin_settings_page = is_admin() && isset($_GET['page']) && isset($_GET['tab']) && isset($_GET['section']) && $_GET['page'] === 'wc-settings' && $_GET['tab'] === 'products' && $_GET['section'] === 'inventory';
+
+	$user_id      = get_current_user_id();
+	$is_dismissed = get_transient( 'bp_bf_banner_dismissed_stock_status_bp_' . $user_id );
+
+
+	if (!$is_plugin_settings_page || $is_dismissed) {
+		return;
+	}
+
+	?>
+
+	<div style="display: flex;justify-content: center;flex-wrap: wrap;align-items: center;flex-direction: row;gap: 20px;">
+
+		<div class="bf-promo-banner" id="bf-promo-banner">
+			<!-- Close button -->
+			<button type="button" class="bf-promo-banner__close" aria-label="Dismiss notice" onclick="bpDismissBfBannerAjax()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+
+			<!-- Image (50% OFF) -->
+			<div class="bf-promo-banner__media">
+				<img 
+					src="<?php echo esc_url( SSFWBP_ASSETS ); ?>/img/black-friday-2026-50-off.png" 
+					alt="50% OFF" 
+					class="bf-promo-banner__img"
+					width="100" 
+					height="100"
+					loading="lazy"
+				/>
+			</div>
+
+			<!-- Central text group -->
+			<div class="bf-promo-banner__content">
+				<h3 class="bf-promo-banner__title">
+					Black Friday deals have arrived! <a href="<?php echo esc_url( SSFWBP_OFFER_URL ); ?>" target="_blank" class="bf-promo-banner__link"><span class="bf-promo-banner__highlight">50% OFF</span></a> <span class="bf-promo-banner__sparkle" aria-hidden="true">all Pro Plugins ✨</span>
+				</h3>
+
+				<div class="bf-promo-banner__body">
+				<p class="bf-promo-banner__paragraph">
+					Thanks for being part of the <strong>Bright Plugins</strong> family!
+				</p>
+				<p class="bf-promo-banner__paragraph">
+					With major upgrades and new releases on the way, grab our lowest price of the year and <strong>lock in your discounted rate for as long as you renew</strong>—valid on all plugins and our new <strong>Club Membership</strong>.
+				</p>
+				</div>
+			</div>
+
+			<!-- Action button on the right -->
+			<div class="bf-promo-banner__actions">
+				<a href="<?php echo esc_url( SSFWBP_OFFER_URL ); ?>" target="_blank" class="bf-promo-banner__btn">
+				Claim Your Discount Now!
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<style>
+		/* Main banner container */
+		.bf-promo-banner {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+			width: 100%;
+			margin: 0 20px 20px 20px;
+			padding: 16px 40px 16px 0;
+			background: #ffffff;
+			border: 1px solid #dcdcdc;
+			border-left: 4px solid #683078;
+			border-radius: 4px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			color: #1d2327;
+			box-sizing: border-box;
+		}
+
+		/* 1. Image / Badge area */
+		.bf-promo-banner__media {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+		}
+
+		.bf-promo-banner__img {
+			display: block;
+			width: 200px;
+			height: auto;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		/* 2. Central content area */
+		.bf-promo-banner__content {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.bf-promo-banner__title {
+			margin: 0 0 20px 0;
+			font-size: 24px;
+			font-weight: 700;
+			line-height: 1.35;
+			color: #1d2327;
+			font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		}
+
+		/* Highlighted text 50% OFF in purple */
+		.bf-promo-banner__highlight {
+			color: #683078;
+			font-weight: 700;
+		}
+		.bf-promo-banner__link {
+			text-decoration: none;
+		}
+
+		.bf-promo-banner__sparkle {
+			display: inline-block;
+			margin-left: 2px;
+			font-size: 24px;
+		}
+
+		/* Paragraph body */
+		.bf-promo-banner__body {
+			font-size: 18px;
+			line-height: 1.5;
+			color: #2c3338;
+			max-width: 794px;
+			font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		}
+
+		.bf-promo-banner__paragraph {
+			margin: 0;
+			font-size: 18px;
+		}
+
+		.bf-promo-banner__paragraph + .bf-promo-banner__paragraph {
+			margin-top: 6px; /* Space between the two texts */
+		}
+
+		/* 3. Button area (Right) */
+		.bf-promo-banner__actions {
+			flex-shrink: 0;
+			margin-left: auto;
+		}
+
+		.bf-promo-banner__btn {
+			display: inline-block;
+			padding: 11px 20px;
+			background-color: #683078;
+			color: #ffffff !important;
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 1.2;
+			text-decoration: none !important;
+			border-radius: 6px;
+			white-space: nowrap;
+			box-shadow: 0 1px 2px rgba(104, 48, 120, 0.2);
+			transition: background-color 0.15s ease, transform 0.1s ease;
+		}
+
+		.bf-promo-banner__btn:hover,
+		.bf-promo-banner__btn:focus {
+			background-color: #51255e;
+		}
+
+		.bf-promo-banner__btn:active {
+			transform: translateY(1px);
+		}
+
+		/* Close "X" button */
+		.bf-promo-banner__close {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 18px;
+			height: 18px;
+			padding: 0;
+			background: transparent;
+			color: #72777c;
+			border: none;
+			border-radius: 50%;
+			font-size: 20px;
+			line-height: 1;
+			cursor: pointer;
+			transition: color 0.15s ease, background 0.15s ease;
+		}
+
+		.bf-promo-banner__close:hover {
+			color: #1d2327;
+			background-color: rgba(0, 0, 0, 0.05);
+		}
+
+		/* Responsive for tablets and small laptops */
+
+		@media (max-width: 1024px) {
+			.bf-promo-banner {
+				flex-direction: column;
+				align-items: flex-start;
+				padding: 24px;
+				gap: 16px;
+			}
+		}
+
+		@media (max-width: 900px) {
+		
+			.bf-promo-banner__actions {
+				margin-left: 0;
+				width: 100%;
+			}
+
+			.bf-promo-banner__btn {
+				display: block;
+				text-align: center;
+				box-sizing: border-box;
+			}
+		}
+
+		/* Mobile responsive */
+		@media (max-width: 500px) {
+			.bf-promo-banner {
+				padding: 20px 16px;
+			}
+			.bf-promo-banner__media {
+				margin-bottom: 4px;
+			}
+			.bf-promo-banner__img {
+				width: 150px;
+			}
+			.bf-promo-banner__title, .bf-promo-banner__sparkle {
+				font-size: 18px;
+			}
+			.bf-promo-banner__paragraph, .bf-promo-banner__btn {
+				font-size: 15px;
+			}
+		}
+	</style>
+
+	<script>
+		function bpDismissBfBannerAjax() {
+			document.getElementById('bf-promo-banner').style.display = 'none';
+
+			const formData = new URLSearchParams();
+			formData.append('action', 'bp_dismiss_bf_banner_stock_status_bp');
+			formData.append('nonce', '<?php echo esc_js( wp_create_nonce( "bp_bf_banner_nonce_stock_status_bp" ) ); ?>');
+
+			fetch(ajaxurl, {
+				method: 'POST',
+				body: formData
+			});
+		}
+	</script>
+	<?php
+}
 
 add_filter( 'woocommerce_get_settings_products', 'brightvessel_woocommerce_show_stock_all_settings', 10, 2 );
 /**

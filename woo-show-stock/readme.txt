@@ -1,15 +1,21 @@
 === Show Stock Status for WooCommerce ===
 Contributors: brightvesseldev, kleinmannbrightvessel
 Tags: stock status, custom, stock, status,show stock
-Requires at least: 4.0
-Requires PHP: 5.6
-WC tested up to: 11.1.0
+Requires at least: 4.9
+Requires PHP: 7.4
+WC tested up to: 11.3.1
 Tested up to: 7.1
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 
 == Description ==
 
 The goal of this plugin is to show the “stock quantity” under each product in the shop, category and archive pages (wherever there is a loop). The code is based on this tutorial: [https://businessbloomer.com/woocommerce-add-stock-quantity-on-shop-page/](https://businessbloomer.com/woocommerce-add-stock-quantity-on-shop-page/)
+
+= ✨ BLACK FRIDAY DEAL - ALL PRO PLUGINS & CLUB MEMBERSHIP! =
+
+Grab our lowest price of the year with a **[50% OFF](https://brightplugins.com/shop/?utm_source=freemium&utm_medium=wp_page&utm_campaign=black_friday_2026&utm_content=stock_status)** valid on all plugins and our new **Club Membership**. You'll lock in your discounted rate as long as you renew!
+
+👉 **[Claim Your 50% Discount Now](https://brightplugins.com/shop/?utm_source=freemium&utm_medium=wp_page&utm_campaign=black_friday_2026&utm_content=stock_status)** *(Use coupon: **BRIGHT50** at checkout)*
 
 ## 🔥 SOME OF OUR FREE PLUGINS ##
 
@@ -28,6 +34,9 @@ The goal of this plugin is to show the “stock quantity” under each product i
 2. Stock settings
 
 == Changelog ==
+
+= 1.0.7 - 23 Nov 26 =
+* Support for WooCommerce 11.3.x
 
 = 1.0.6 - 09 Sept 2026 =
 * Support for WooCommerce 11.1.x
